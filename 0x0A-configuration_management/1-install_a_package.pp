@@ -9,3 +9,8 @@ package { 'Flask':
   provider => 'pip3',
   require  => Package['python3-pip'],
 }
+
+package { 'Werkzeug':
+  ensure   => '2.0.0',
+  provider => 'pip3',
+}
