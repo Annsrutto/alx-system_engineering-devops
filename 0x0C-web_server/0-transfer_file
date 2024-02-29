@@ -18,8 +18,4 @@ else
     ssh_key="-i $ssh_key"
 fi
 
-if scp -o StrictHostKeyChecking=no "$ssh_key" "$file_path" "$username@$server_ip":~/; then
-    echo "File transfer successful!"
-else
-    echo "File transfer failed."
-fi
+scp "$SCP_OPTIONS" -i "$ssh_key" "$file_path" "$username@$server_ip":~/ || { echo "Error transferring file."; exit 1; }
