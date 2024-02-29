@@ -11,4 +11,8 @@ server_ip="$2"
 username="$3"
 ssh_key="$4"
 
+export SCP_OPTIONS="-o StrictHostKeyChecking=no"
+
 scp "$SCP_OPTIONS" -i "$ssh_key" "$file_path" "$username@$server_ip":~/ || { echo "Error transferring file."; exit 1; }
+
+echo "File transferred successfully to $username@$server_ip:~/"
