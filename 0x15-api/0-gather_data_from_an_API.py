@@ -7,6 +7,7 @@ import requests
 
 
 def get_employee_todo_progress(employee_id):
+    """Retrieves and displays TODO list progress for a given employee ID."""
     base_url = 'https://jsonplaceholder.typicode.com'
     user_url = f'{base_url}/users/{employee_id}'
     todos_url = f'{base_url}/todos?userId={employee_id}'
