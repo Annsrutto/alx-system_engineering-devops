@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Export employee TODO tasks to stdout"""
 
-import sys
 import requests
+import sys
 
 
 def employee_todo_progress(employee_id):
