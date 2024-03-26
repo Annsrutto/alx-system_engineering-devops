@@ -6,32 +6,43 @@ import requests
 import sys
 
 
-def get_employee_todo_progress(id):
-    """Retrieves and displays TODO list progress for a given employee ID."""
+def get_employee_todo_progress(employee_id):
+    base_url = 'https://jsonplaceholder.typicode.com'
+    user_url = f'{base_url}/users/{employee_id}'
+    todos_url = f'{base_url}/todos?userId={employee_id}'
 
-    url = "https://jsonplaceholder.typicode.com/users/{}".format(id)
-    response = requests.get(url)
-    response_json = response.json()
-    employee_name = response_json.get("name")
+    try:
+        # Fetch user data
+        user_response = requests.get(user_url)
+        user_data = user_response.json()
+        employee_name = user_data.get('name', 'Unknown')
 
-    url = "https://jsonplaceholder.typicode.com/users/{}/todos".format(id)
-    todos = requests.get(url)
-    todos_json = todos.json()
-    total_tasks = len(todos_json)
+        # Fetch user's TODO list
+        todos_response = requests.get(todos_url)
+        todos_data = todos_response.json()
+        completed_tasks = sum(1 for todo in todos_data if todo['completed'])
+        total_tasks = len(todos_data)
 
-    num_completed_tasks = 0
-    task_list = ""
+        # Display progress
+        print(f"Employee Name: {employee_name} is done with tasks"
+              f"({completed_tasks}/{total_tasks}):")
+        for todo in todos_data:
+            if todo['completed']:
+                print(f"\t{todo['title']}")
 
-    for task in todos_json:
-        if task.get("completed") is True:
-            num_completed_tasks += 1
-            task_list += "\t " + task.get("title") + "\n"
-
-    print("Employee {} is done with tasks({}/{}):".format(employee_name,
-                                                          num_completed_tasks,
-                                                          total_tasks))
-    print(task_list[:-1])
+    except requests.RequestException as e:
+        print(f"Error fetching data: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    get_employee_todo_progress(sys.argv[1])
+    if len(sys.argv) != 2:
+        print("Usage: python3 0-gather_data_from_an_API.py <employee_id>")
+        sys.exit(1)
+
+    employee_id = sys.argv[1]
+    if not employee_id.isdigit():
+        print("Employee ID must be an integer.")
+        sys.exit(1)
+
+    get_employee_todo_progress(int(employee_id))
