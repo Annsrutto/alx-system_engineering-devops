@@ -35,13 +35,4 @@ def employee_todo_progress(employee_id):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python3 script_name.py <employee_id>")
-        sys.exit(1)
-
-    employee_id = sys.argv[1]
-    if not employee_id.isdigit():
-        print("Employee ID must be an integer.")
-        sys.exit(1)
-
-    employee_todo_progress(int(employee_id))
+    employee_todo_progress(sys.argv[1])
