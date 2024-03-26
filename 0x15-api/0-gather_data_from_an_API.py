@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+"""A Python script that uses REST API for a given employee ID,
+returns information about his/her TODO list progress"""
 
 import requests
 import sys
@@ -6,39 +8,42 @@ import sys
 
 def get_employee_todo_progress(employee_id):
     """Retrieves and displays TODO list progress for a given employee ID."""
-    # Validate employee ID (positive integer)
-    if not isinstance(employee_id, int) or employee_id <= 0:
-        raise ValueError("Employee ID must be a positive integer.")
+    base_url = 'https://jsonplaceholder.typicode.com'
+    user_url = f'{base_url}/users/{employee_id}'
+    todos_url = f'{base_url}/todos?userId={employee_id}'
 
-    # Build API endpoint URL
-    url = f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}"
+    try:
+        # Fetch user data
+        user_response = requests.get(user_url)
+        user_data = user_response.json()
+        employee_name = user_data.get('name', 'Unknown')
 
-    # Send GET request using requests library
-    response = requests.get(url)
+        # Fetch user's TODO list
+        todos_response = requests.get(todos_url)
+        todos_data = todos_response.json()
+        num_completed_tasks = sum(1 for todo in todos_data if todo['completed'])
+        total_tasks = len(todos_data)
 
-    # Check for successful response
-    if response.status_code == 200:
-        todos = response.json()
+        # Display progress
+        print(f"Employee {employee_name} is done with tasks "
+              f"({num_completed_tasks}/{total_tasks}):")
+        for todo in todos_data:
+            if todo['completed']:
+                print(f"\t{todo['title']}")
 
-    # Count completed tasks
-    completed_tasks = sum(todo.get("completed", False) for todo in todos)
-    total_tasks = len(todos)
-
-    # Display progress information
-    print(f"Employee {todos[0].get('title', 'Unknown')} is done with tasks"
-          f"({completed_tasks}/{total_tasks}):")
-
-    # Display completed task titles
-    for todo in todos:
-        if todo.get("completed", False):
-            print(f"\t{todo.get('title', 'Unknown')}")
-        else:
-            print(f"Error retrieving data: {response.status_code}")
+    except requests.RequestException as e:
+        print(f"Error fetching data: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    # Get employee ID input from user (assuming integer input)
-    employee_id = int(input("Enter employee ID: "))
+    if len(sys.argv) != 2:
+        print("Usage: python3 0-gather_data_from_an_API.py <employee_id>")
+        sys.exit(1)
 
-    # Retrieve and display progress
-    get_employee_todo_progress(employee_id)
+    employee_id = sys.argv[1]
+    if not employee_id.isdigit():
+        print("Employee ID must be an integer.")
+        sys.exit(1)
+
+    get_employee_todo_progress(int(employee_id))
