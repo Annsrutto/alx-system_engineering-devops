@@ -21,8 +21,7 @@ def get_employee_todo_progress(employee_id):
         # Fetch user's TODO list
         todos_response = requests.get(todos_url)
         todos_data = todos_response.json()
-        num_completed_tasks = sum(1 for todo in todos_data
-                                  if todo['completed'])
+        num_completed_tasks = sum(1 for todo in todos_data if todo['completed'])
         total_tasks = len(todos_data)
 
         # Display progress
