@@ -22,4 +22,8 @@ def number_of_subscribers(subreddit):
 
 
 if __name__ == "__main__":
-    number_of_subscribers(argv[1])
+    if len(argv) < 2:
+        print("Please pass an argument for the subreddit to search.")
+    else:
+        subreddit = argv[1]
+        print("{:d}".format(number_of_subscribers(subreddit)))
