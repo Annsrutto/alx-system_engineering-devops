@@ -8,16 +8,12 @@ from sys import argv
 
 def number_of_subscribers(subreddit):
     """Returns the number of subscribers for a given subreddit."""
-
-    url = f'https://www.reddit.com/r/{subreddit}/about.json'
     headers = {'User-Agent': 'codergirl'}
-    response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        data = response.json()
-        subscribers = data['data']['subscribers']
-        return subscribers
-    else:
+    url = requests.get('https://www.reddit.com/r/{}/about.json'
+                       .format(subreddit), headers=headers).json()
+    try:
+        return url.get('data').get('subscribers')
+    except Exception:
         return 0
 
 
